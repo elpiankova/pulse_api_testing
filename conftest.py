@@ -19,9 +19,19 @@ def base_role_url(base_url):
     return base_url + 'roles/'
 
 
-@pytest.fixture()
-def headers():
-    return {'Content-Type': 'application/json'}
+@pytest.fixture(scope='session')
+def token(base_url):
+    r_token = requests.post(f'{base_url}/api-token-auth/',
+                            data={'username': 'admin', 'password': 'pass'})
+    print(r_token.json())
+    return r_token.json()['token']
+
+
+@pytest.fixture(scope='session')
+def headers(token):
+    r = {'Content-Type': 'application/json',
+         'Authorization': f'Token {token}'}
+    return r
 
 
 books_data = [
